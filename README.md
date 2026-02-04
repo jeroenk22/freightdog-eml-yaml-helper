@@ -1,4 +1,4 @@
-# Freightdog – EML → YAML Helper
+# [Freightdog](https://www.freightdog.com/) – EML → YAML Helper
 
 Deze tool is een eenvoudige webbased helper om **YAML-bestanden te genereren** die [Freightdog](https://www.freightdog.com/). kan gebruiken als **begeleiding bij testmails (EML-bestanden)**.
 
