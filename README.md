@@ -20,7 +20,7 @@ tot één correct opgebouwd **YAML-bestand** dat samen met het EML-bestand aan F
 
 ## Benodigde data uit MendriX
 
-De tool verwacht **CSV-bestanden** die afkomstig zijn uit de MendriX database.  
+De tool verwacht **CSV-bestanden** met data afkomstig uit de MendriX database.  
 Exporteer deze als **comma-separated CSV met headers**.
 
 Hieronder staan de SQL-queries die gebruikt kunnen worden om de juiste data op te halen.
