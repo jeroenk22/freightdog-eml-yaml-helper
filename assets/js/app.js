@@ -748,7 +748,9 @@ function clearSection(prefix) {
 }
 
 function resetAfterDownload() {
-  // --- EML leegmaken (EML wél resetten) ---
+  // ------------------------------------
+  // 1) EML velden leegmaken (EML wél resetten)
+  // ------------------------------------
   const emlFile = document.getElementById("emlFile");
   const emlSubject = document.getElementById("emlSubject");
   const fileName = document.getElementById("fileName");
@@ -757,41 +759,35 @@ function resetAfterDownload() {
   if (emlSubject) emlSubject.value = "";
   if (fileName) fileName.value = "voorbeeld.yaml";
 
-  // --- Relatie & Product zoekvelden leeg ---
-  if (typeof relatieSearch !== "undefined") relatieSearch.value = "";
-  if (typeof productSearch !== "undefined") productSearch.value = "";
+  // ------------------------------------
+  // 2) Alles leegmaken in de "verwachte data" velden
+  //    (dus: alle inputs/textarea's behalve de 3 CSV uploads)
+  // ------------------------------------
+  const skipIds = new Set([
+    "csvKlantenUpload",
+    "csvProductenUpload",
+    "csvVerpakkingenUpload",
+  ]);
 
-  if (typeof relatieSuggestions !== "undefined")
-    hideSuggestions(relatieSuggestions);
-  if (typeof productSuggestions !== "undefined")
-    hideSuggestions(productSuggestions);
+  // alle inputs en textareas leegmaken behalve de CSV upload inputs
+  document.querySelectorAll("input, textarea").forEach((el) => {
+    if (el.id && skipIds.has(el.id)) return;
 
-  // cards reset (visual)
-  if (typeof selectedRelatieCard !== "undefined") {
-    selectedRelatieCard.innerHTML = `<div class="text-sm text-slate-500">Nog geen relatie geselecteerd.</div>`;
-  }
-  if (typeof selectedProductCard !== "undefined") {
-    selectedProductCard.innerHTML = `<div class="text-sm text-slate-500">Nog geen product geselecteerd.</div>`;
-  }
+    // file inputs: alleen EML hebben we hierboven al leeg gemaakt
+    if (el.type === "file") return;
 
-  // --- State reset (maar CSV arrays blijven staan: klanten/producten/verpakkingen NIET leegmaken) ---
+    // normale velden
+    el.value = "";
+  });
+
+  // ------------------------------------
+  // 3) State resetten (CSV data arrays blijven bestaan!)
+  // ------------------------------------
   state.customer = "";
   state.customerRef = "";
   state.customerContact = "";
   state.product = "";
 
-  // readonly inputs ook leeg tonen
-  const customerEl = document.querySelector('[data-path="customer"]');
-  const customerContactEl = document.querySelector(
-    '[data-path="customerContact"]',
-  );
-  const productEl = document.querySelector('[data-path="product"]');
-
-  if (customerEl) customerEl.value = "";
-  if (customerContactEl) customerContactEl.value = "";
-  if (productEl) productEl.value = "";
-
-  // goods reset naar 1 lege regel
   state.goods = [
     {
       parts: 1,
@@ -804,13 +800,32 @@ function resetAfterDownload() {
       notes: "",
     },
   ];
+
+  Object.keys(state.pickup).forEach((k) => (state.pickup[k] = ""));
+  Object.keys(state.delivery).forEach((k) => (state.delivery[k] = ""));
+
+  // ------------------------------------
+  // 4) UI elementen resetten (kaarten + zoekvelden + suggestions)
+  // ------------------------------------
+  if (typeof relatieSearch !== "undefined") relatieSearch.value = "";
+  if (typeof productSearch !== "undefined") productSearch.value = "";
+
+  if (typeof relatieSuggestions !== "undefined")
+    hideSuggestions(relatieSuggestions);
+  if (typeof productSuggestions !== "undefined")
+    hideSuggestions(productSuggestions);
+
+  if (typeof selectedRelatieCard !== "undefined") {
+    selectedRelatieCard.innerHTML = `<span class="text-slate-400">Nog geen relatie gekozen.</span>`;
+  }
+  if (typeof selectedProductCard !== "undefined") {
+    selectedProductCard.innerHTML = `<span class="text-slate-400">Nog geen product gekozen.</span>`;
+  }
+
+  // Goods opnieuw tekenen (1 lege regel)
   renderGoods();
 
-  // pickup & delivery leegmaken via bestaande helper (leegt ook inputs)
-  clearSection("pickup");
-  clearSection("delivery");
-
-  // YAML preview opnieuw renderen (en totalen)
+  // YAML preview opnieuw opbouwen (totalen kloppen weer)
   renderYamlPreview();
 }
 
