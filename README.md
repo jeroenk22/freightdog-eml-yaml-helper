@@ -1,8 +1,8 @@
 # Freightdog – EML → YAML Helper
 
-Deze tool is een eenvoudige webbased helper om **YAML-bestanden te genereren** die Freightdog kan gebruiken als **begeleiding bij testmails (EML-bestanden)**.
+Deze tool is een eenvoudige webbased helper om **YAML-bestanden te genereren** die [Freightdog](https://www.freightdog.com/). kan gebruiken als **begeleiding bij testmails (EML-bestanden)**.
 
-Het doel is om bij een voorbeeldmail (`.eml`) een bijpassend YAML-bestand aan te leveren met de **verwachte gestructureerde data**, zodat Freightdog de analyse correct kan testen en valideren.
+Het doel is om bij een voorbeeldmail (`.eml`) een bijpassend YAML-bestand aan te leveren met de **verwachte gestructureerde data**, zodat [Freightdog](https://www.freightdog.com/) de analyse correct kan testen en valideren.
 
 ---
 
@@ -10,17 +10,17 @@ Het doel is om bij een voorbeeldmail (`.eml`) een bijpassend YAML-bestand aan te
 
 De tool combineert:
 
-- CSV-data afkomstig uit **MendriX**
+- CSV-data afkomstig uit **[MendriX](https://mendrix.nl/)**
 - Een voorbeeldmail (`.eml`)
 - Handmatige invoer en automatische logica
 
-tot één correct opgebouwd **YAML-bestand** dat samen met het EML-bestand aan Freightdog kan worden aangeleverd.
+tot één correct opgebouwd **YAML-bestand** dat samen met het EML-bestand aan [Freightdog](https://www.freightdog.com/) kan worden aangeleverd.
 
 ---
 
-## Benodigde data uit MendriX
+## Benodigde data uit [MendriX](https://mendrix.nl/)
 
-De tool verwacht **CSV-bestanden** met data afkomstig uit de MendriX database.  
+De tool verwacht **CSV-bestanden** met data afkomstig uit de [MendriX](https://mendrix.nl/) database.  
 Exporteer deze als **comma-separated CSV met headers**.
 
 Hieronder staan de SQL-queries die gebruikt kunnen worden om de juiste data op te halen.
@@ -130,15 +130,15 @@ Je kunt:
 
 ---
 
-## Aanleveren aan Freightdog
+## Aanleveren aan [Freightdog](https://www.freightdog.com/)
 
-Lever aan Freightdog aan:
+Lever aan [Freightdog](https://www.freightdog.com/) aan:
 
 - Het EML-bestand (`.eml`)
 - Het bijbehorende YAML-bestand (`.yaml`)
 
-Samen vormen deze bestanden één complete testcase voor Freightdog.
+Samen vormen deze bestanden één complete testcase voor [Freightdog](https://www.freightdog.com/).
 
 ---
 
-_Gemaakt voor Freightdog in combinatie met MendriX_
+_Gemaakt voor [Freightdog](https://www.freightdog.com/) in combinatie met [MendriX](https://mendrix.nl/)_
