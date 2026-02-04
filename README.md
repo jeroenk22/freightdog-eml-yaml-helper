@@ -100,7 +100,7 @@ Upload een `.eml` bestand.
 De tool:
 
 - Gebruikt de bestandsnaam van de `.eml`.
-- Gebruikt dit om als bestandsnaam voor de te genereren `.yaml`.
+- Gebruikt dit als bestandsnaam voor de te genereren `.yaml`.
 
 ---
 
