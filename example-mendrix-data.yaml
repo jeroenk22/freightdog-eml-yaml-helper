@@ -1,0 +1,44 @@
+customer: "118"
+customerRef: "D-25421"
+customerContact: "Gert van de Lotering"
+product: "7"
+totalParts: 1
+totalWeightKg: 90
+totalVolumeCbm: 1.44
+goods:
+  - parts: 1
+    packing: "Europallet"
+    weightKg: 90
+    volumeCbm: 1.44
+    dimsLcm: 120
+    dimsWcm: 80
+    dimsHcm: 150
+    notes: "Geen haast"
+pickup:
+  name: "Flipsen en Co."
+  street: "Oosteinde"
+  number: "133"
+  postalCode: "2611 VC"
+  place: "Delft"
+  countryCode: "NL"
+  premise: ""
+  contactName: "Gert van de Lotering"
+  phone: "+31 6 76755889"
+  email: "gert@flipsen.com"
+  dateFrom: ""
+  dateTo: ""
+  instructions: "Let op we zijn van Ede naar Delft verhuisd !!! Geen haast"
+delivery:
+  name: "Innovative Technology"
+  street: "Am Hafen"
+  number: "70"
+  postalCode: "25421"
+  place: "Pinneberg"
+  countryCode: "DE"
+  premise: ""
+  contactName: "Innovative Technology"
+  phone: ""
+  email: ""
+  dateFrom: ""
+  dateTo: ""
+  instructions: "Geen haast"

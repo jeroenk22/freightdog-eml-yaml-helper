@@ -1,0 +1,645 @@
+<!doctype html>
+<html lang="nl">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Freightdog – EML → YAML helper</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/js-yaml@4.1.0/dist/js-yaml.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js"></script>
+
+    <link rel="stylesheet" href="assets/css/styles.css" />
+  </head>
+
+  <body class="bg-slate-50 text-slate-900">
+    <div class="max-w-screen-2xl mx-auto p-4 md:p-8">
+      <header class="mb-6">
+        <h1 class="text-2xl md:text-3xl font-bold">
+          Freightdog – Voorbeeldmail → YAML
+        </h1>
+        <p class="text-slate-600 mt-2">
+          Lees een <code class="bg-white px-1 rounded border">.eml</code> in,
+          vul het formulier in en download direct een
+          <code class="bg-white px-1 rounded border">.yaml</code>.
+        </p>
+
+        <div
+          id="autoLoadStatus"
+          class="mt-4 hidden rounded-xl border bg-white p-4 text-sm"
+        ></div>
+      </header>
+
+      <div class="grid grid-cols-1 xl:grid-cols-2 gap-6">
+        <!-- LEFT -->
+        <section class="bg-white rounded-2xl shadow-sm border p-6">
+          <h2 class="text-lg font-semibold mb-3">1) CSV’s inladen (upload)</h2>
+
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+            <div class="rounded-xl border bg-slate-50 p-4">
+              <div class="font-semibold">Klanten</div>
+              <div class="text-sm text-slate-600 mt-1" id="klantenStatus">
+                Nog niet geladen.
+              </div>
+              <div class="text-xs text-slate-500 mt-2">
+                Relatie zoeken (ClientNo/ComName/…)
+              </div>
+              <div class="mt-3">
+                <input
+                  id="csvKlantenUpload"
+                  type="file"
+                  accept=".csv,text/csv"
+                  class="block w-full text-sm file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-slate-900 file:text-white hover:file:bg-slate-800 border rounded-lg p-2"
+                />
+              </div>
+            </div>
+
+            <div class="rounded-xl border bg-slate-50 p-4">
+              <div class="font-semibold">Producten</div>
+              <div class="text-sm text-slate-600 mt-1" id="productenStatus">
+                Nog niet geladen.
+              </div>
+              <div class="text-xs text-slate-500 mt-2">
+                Product zoeken (ProductCode/Description)
+              </div>
+              <div class="mt-3">
+                <input
+                  id="csvProductenUpload"
+                  type="file"
+                  accept=".csv,text/csv"
+                  class="block w-full text-sm file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-slate-900 file:text-white hover:file:bg-slate-800 border rounded-lg p-2"
+                />
+              </div>
+            </div>
+
+            <div class="rounded-xl border bg-slate-50 p-4">
+              <div class="font-semibold">Verpakkingen</div>
+              <div class="text-sm text-slate-600 mt-1" id="verpakkingenStatus">
+                Nog niet geladen.
+              </div>
+              <div class="text-xs text-slate-500 mt-2">
+                Wordt alvast ingelezen (later evt dropdown)
+              </div>
+              <div class="mt-3">
+                <input
+                  id="csvVerpakkingenUpload"
+                  type="file"
+                  accept=".csv,text/csv"
+                  class="block w-full text-sm file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-slate-900 file:text-white hover:file:bg-slate-800 border rounded-lg p-2"
+                />
+              </div>
+            </div>
+          </div>
+
+          <!-- EML -->
+          <h2 class="text-lg font-semibold mb-4">
+            2) EML inlezen & bestandsnaam
+          </h2>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+            <div>
+              <label class="block text-sm font-medium mb-1">EML bestand</label>
+              <input
+                id="emlFile"
+                type="file"
+                accept=".eml,message/rfc822,text/plain"
+                class="block w-full text-sm file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:bg-slate-900 file:text-white hover:file:bg-slate-800 border rounded-lg p-2"
+              />
+              <p class="text-xs text-slate-500 mt-1">
+                Pakt automatisch <b>Subject</b> uit de headers.
+              </p>
+            </div>
+
+            <div>
+              <label class="block text-sm font-medium mb-1"
+                >Onderwerp (uit .eml)</label
+              >
+              <input
+                id="emlSubject"
+                type="text"
+                placeholder="(wordt automatisch ingevuld)"
+                class="w-full border rounded-lg p-2"
+              />
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+            <div>
+              <label class="block text-sm font-medium mb-1">Bestandsnaam</label>
+              <input
+                id="fileName"
+                type="text"
+                placeholder="bijv. aanvraag-transport.yaml"
+                class="w-full border rounded-lg p-2"
+              />
+              <p class="text-xs text-slate-500 mt-1">
+                Wordt gemaakt op basis van onderwerp.
+              </p>
+            </div>
+
+            <div class="flex items-end gap-2">
+              <button
+                id="downloadBtn"
+                class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-semibold rounded-lg py-2 px-4"
+              >
+                Download .yaml
+              </button>
+            </div>
+          </div>
+
+          <hr class="my-6" />
+
+          <h2 class="text-lg font-semibold mb-4">3) Verwachte data invullen</h2>
+
+          <!-- Relatie zoeken -->
+          <div class="border rounded-2xl p-5 bg-slate-50 mb-6">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 items-start">
+              <div class="lg:col-span-2">
+                <label class="block text-sm font-medium mb-1"
+                  >Relatie zoeken</label
+                >
+                <div class="relative">
+                  <input
+                    id="relatieSearch"
+                    type="text"
+                    class="w-full border rounded-lg p-3 text-base"
+                    placeholder="Zoek op naam, contact, straat, postcode, plaats, land, nummer…"
+                    autocomplete="off"
+                  />
+                  <div
+                    class="absolute right-3 top-3.5 text-slate-400"
+                    title="Zoeken"
+                  >
+                    🔎
+                  </div>
+
+                  <div
+                    id="relatieSuggestions"
+                    class="hidden absolute z-30 mt-2 w-full rounded-xl border bg-white shadow-lg overflow-hidden max-h-[28rem] overflow-y-auto"
+                  ></div>
+                </div>
+                <p class="text-xs text-slate-500 mt-2">
+                  Bij selectie wordt <code>ClientNo</code> gezet als
+                  <b>Relatie</b> en <code>ComPerson</code> als <b>Persoon</b>.
+                </p>
+              </div>
+
+              <div>
+                <label class="block text-sm font-medium mb-1"
+                  >Geselecteerde relatie</label
+                >
+                <div
+                  id="selectedRelatieCard"
+                  class="border rounded-xl bg-white p-3 text-sm text-slate-600 min-h-[96px]"
+                >
+                  <span class="text-slate-400">Nog geen relatie gekozen.</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Product zoeken -->
+          <div class="border rounded-2xl p-5 bg-slate-50 mb-6">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-4 items-start">
+              <div class="lg:col-span-2">
+                <label class="block text-sm font-medium mb-1"
+                  >Product zoeken</label
+                >
+                <div class="relative">
+                  <input
+                    id="productSearch"
+                    type="text"
+                    class="w-full border rounded-lg p-3 text-base"
+                    placeholder="Zoek op ProductCode of ProductDescription…"
+                    autocomplete="off"
+                  />
+                  <div
+                    class="absolute right-3 top-3.5 text-slate-400"
+                    title="Zoeken"
+                  >
+                    🔎
+                  </div>
+
+                  <div
+                    id="productSuggestions"
+                    class="hidden absolute z-30 mt-2 w-full rounded-xl border bg-white shadow-lg overflow-hidden max-h-[28rem] overflow-y-auto"
+                  ></div>
+                </div>
+                <p class="text-xs text-slate-500 mt-2">
+                  Bij selectie wordt <code>ProductId</code> gezet als
+                  <b>Product</b> én worden Gewenst-tijden automatisch gevuld.
+                </p>
+              </div>
+
+              <div>
+                <label class="block text-sm font-medium mb-1"
+                  >Geselecteerd product</label
+                >
+                <div
+                  id="selectedProductCard"
+                  class="border rounded-xl bg-white p-3 text-sm text-slate-600 min-h-[96px]"
+                >
+                  <span class="text-slate-400">Nog geen product gekozen.</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Top fields -->
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div>
+              <label class="block text-sm font-medium mb-1">Relatie</label>
+              <input
+                data-path="customer"
+                type="text"
+                class="w-full border rounded-lg p-3 bg-slate-100"
+                readonly
+              />
+            </div>
+
+            <div>
+              <label class="block text-sm font-medium mb-1">Uw kenmerk</label>
+              <input
+                data-path="customerRef"
+                type="text"
+                class="w-full border rounded-lg p-3"
+                placeholder="D-25421"
+              />
+            </div>
+
+            <div>
+              <label class="block text-sm font-medium mb-1"
+                >Persoon (contactpersoon klant)</label
+              >
+              <input
+                data-path="customerContact"
+                type="text"
+                class="w-full border rounded-lg p-3"
+                placeholder="Naam contact"
+              />
+            </div>
+
+            <div>
+              <label class="block text-sm font-medium mb-1">Product</label>
+              <input
+                data-path="product"
+                type="text"
+                class="w-full border rounded-lg p-3 bg-slate-100"
+                readonly
+              />
+            </div>
+
+            <div>
+              <label class="block text-sm font-medium mb-1">Totaal colli</label>
+              <input
+                data-path="totalParts"
+                type="number"
+                class="w-full border rounded-lg p-3 bg-slate-100"
+                readonly
+              />
+            </div>
+
+            <div>
+              <label class="block text-sm font-medium mb-1"
+                >Totaal gewicht (kg)</label
+              >
+              <input
+                data-path="totalWeightKg"
+                type="number"
+                step="0.01"
+                class="w-full border rounded-lg p-3 bg-slate-100"
+                readonly
+              />
+            </div>
+
+            <div>
+              <label class="block text-sm font-medium mb-1"
+                >Totaal volume (m2)</label
+              >
+              <input
+                data-path="totalVolumeCbm"
+                type="number"
+                step="0.00001"
+                class="w-full border rounded-lg p-3 bg-slate-100"
+                readonly
+              />
+            </div>
+          </div>
+
+          <!-- Goods -->
+          <div class="mt-8">
+            <div class="flex items-center justify-between mb-3">
+              <h3 class="text-base font-semibold">
+                Colliregels (meerdere regels mogelijk)
+              </h3>
+              <button
+                id="addGoods"
+                class="bg-slate-100 hover:bg-slate-200 border rounded-lg px-3 py-2 text-sm font-semibold"
+              >
+                + Voeg collo toe
+              </button>
+            </div>
+
+            <div id="goodsContainer" class="space-y-4"></div>
+
+            <p class="text-xs text-slate-500 mt-2">
+              Volume (m2) = L×B×H (cm) / 1.000.000 → bij 10×10×10 wordt dat
+              0.00100. Volume mag handmatig aangepast worden.
+            </p>
+          </div>
+
+          <!-- Laden/Lossen -->
+          <div class="mt-10 grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <div class="border rounded-2xl p-5 bg-slate-50">
+              <div class="flex items-center justify-between mb-4">
+                <h3 class="text-base font-semibold">Laden</h3>
+                <button
+                  type="button"
+                  id="clearPickupBtn"
+                  class="inline-flex items-center justify-center w-9 h-9 rounded-lg border bg-white hover:bg-slate-100 text-slate-600"
+                  title="Laden leegmaken"
+                  aria-label="Laden leegmaken"
+                >
+                  ✖️
+                </button>
+              </div>
+
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                <div>
+                  <label class="block text-sm font-medium mb-1">Naam</label>
+                  <input
+                    class="w-full border rounded-lg p-3"
+                    data-path="pickup.name"
+                  />
+                </div>
+                <div>
+                  <label class="block text-sm font-medium mb-1"
+                    >Contact (laden)</label
+                  >
+                  <input
+                    class="w-full border rounded-lg p-3"
+                    data-path="pickup.contactName"
+                  />
+                </div>
+
+                <div>
+                  <label class="block text-sm font-medium mb-1">Straat</label>
+                  <input
+                    class="w-full border rounded-lg p-3"
+                    data-path="pickup.street"
+                  />
+                </div>
+                <div>
+                  <label class="block text-sm font-medium mb-1"
+                    >Huisnummer</label
+                  >
+                  <input
+                    class="w-full border rounded-lg p-3"
+                    data-path="pickup.number"
+                  />
+                </div>
+
+                <div>
+                  <label class="block text-sm font-medium mb-1">Postcode</label>
+                  <input
+                    class="w-full border rounded-lg p-3"
+                    data-path="pickup.postalCode"
+                  />
+                </div>
+                <div>
+                  <label class="block text-sm font-medium mb-1">Plaats</label>
+                  <input
+                    class="w-full border rounded-lg p-3"
+                    data-path="pickup.place"
+                  />
+                </div>
+
+                <div>
+                  <label class="block text-sm font-medium mb-1">Land</label>
+                  <input
+                    class="w-full border rounded-lg p-3"
+                    data-path="pickup.countryCode"
+                    placeholder="Nederland"
+                  />
+                </div>
+                <div>
+                  <label class="block text-sm font-medium mb-1">Locatie</label>
+                  <input
+                    class="w-full border rounded-lg p-3"
+                    data-path="pickup.premise"
+                  />
+                </div>
+
+                <div>
+                  <label class="block text-sm font-medium mb-1">Telefoon</label>
+                  <input
+                    class="w-full border rounded-lg p-3"
+                    data-path="pickup.phone"
+                  />
+                </div>
+                <div>
+                  <label class="block text-sm font-medium mb-1">E-mail</label>
+                  <input
+                    class="w-full border rounded-lg p-3"
+                    data-path="pickup.email"
+                  />
+                </div>
+
+                <div>
+                  <label class="block text-sm font-medium mb-1"
+                    >Gewenst (van)</label
+                  >
+                  <input
+                    class="w-full border rounded-lg p-3"
+                    type="datetime-local"
+                    data-dt-path="pickup.dateFrom"
+                  />
+                </div>
+                <div>
+                  <label class="block text-sm font-medium mb-1"
+                    >Gewenst (tot)</label
+                  >
+                  <input
+                    class="w-full border rounded-lg p-3"
+                    type="datetime-local"
+                    data-dt-path="pickup.dateTo"
+                  />
+                </div>
+
+                <div class="md:col-span-2">
+                  <label class="block text-sm font-medium mb-1"
+                    >Instructies</label
+                  >
+                  <textarea
+                    class="w-full border rounded-lg p-3"
+                    rows="3"
+                    data-path="pickup.instructions"
+                  ></textarea>
+                </div>
+              </div>
+            </div>
+
+            <div class="border rounded-2xl p-5 bg-slate-50">
+              <div class="flex items-center justify-between mb-4">
+                <h3 class="text-base font-semibold">Lossen</h3>
+                <button
+                  type="button"
+                  id="clearDeliveryBtn"
+                  class="inline-flex items-center justify-center w-9 h-9 rounded-lg border bg-white hover:bg-slate-100 text-slate-600"
+                  title="Lossen leegmaken"
+                  aria-label="Lossen leegmaken"
+                >
+                  ✖️
+                </button>
+              </div>
+
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                <div>
+                  <label class="block text-sm font-medium mb-1">Naam</label>
+                  <input
+                    class="w-full border rounded-lg p-3"
+                    data-path="delivery.name"
+                  />
+                </div>
+                <div>
+                  <label class="block text-sm font-medium mb-1"
+                    >Contact (lossen)</label
+                  >
+                  <input
+                    class="w-full border rounded-lg p-3"
+                    data-path="delivery.contactName"
+                  />
+                </div>
+
+                <div>
+                  <label class="block text-sm font-medium mb-1">Straat</label>
+                  <input
+                    class="w-full border rounded-lg p-3"
+                    data-path="delivery.street"
+                  />
+                </div>
+                <div>
+                  <label class="block text-sm font-medium mb-1"
+                    >Huisnummer</label
+                  >
+                  <input
+                    class="w-full border rounded-lg p-3"
+                    data-path="delivery.number"
+                  />
+                </div>
+
+                <div>
+                  <label class="block text-sm font-medium mb-1">Postcode</label>
+                  <input
+                    class="w-full border rounded-lg p-3"
+                    data-path="delivery.postalCode"
+                  />
+                </div>
+                <div>
+                  <label class="block text-sm font-medium mb-1">Plaats</label>
+                  <input
+                    class="w-full border rounded-lg p-3"
+                    data-path="delivery.place"
+                  />
+                </div>
+
+                <div>
+                  <label class="block text-sm font-medium mb-1">Land</label>
+                  <input
+                    class="w-full border rounded-lg p-3"
+                    data-path="delivery.countryCode"
+                    placeholder="Nederland"
+                  />
+                </div>
+                <div>
+                  <label class="block text-sm font-medium mb-1">Locatie</label>
+                  <input
+                    class="w-full border rounded-lg p-3"
+                    data-path="delivery.premise"
+                  />
+                </div>
+
+                <div>
+                  <label class="block text-sm font-medium mb-1">Telefoon</label>
+                  <input
+                    class="w-full border rounded-lg p-3"
+                    data-path="delivery.phone"
+                  />
+                </div>
+                <div>
+                  <label class="block text-sm font-medium mb-1">E-mail</label>
+                  <input
+                    class="w-full border rounded-lg p-3"
+                    data-path="delivery.email"
+                  />
+                </div>
+
+                <div>
+                  <label class="block text-sm font-medium mb-1"
+                    >Gewenst (van)</label
+                  >
+                  <input
+                    class="w-full border rounded-lg p-3"
+                    type="datetime-local"
+                    data-dt-path="delivery.dateFrom"
+                  />
+                </div>
+                <div>
+                  <label class="block text-sm font-medium mb-1"
+                    >Gewenst (tot)</label
+                  >
+                  <input
+                    class="w-full border rounded-lg p-3"
+                    type="datetime-local"
+                    data-dt-path="delivery.dateTo"
+                  />
+                </div>
+
+                <div class="md:col-span-2">
+                  <label class="block text-sm font-medium mb-1"
+                    >Instructies</label
+                  >
+                  <textarea
+                    class="w-full border rounded-lg p-3"
+                    rows="3"
+                    data-path="delivery.instructions"
+                  ></textarea>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- RIGHT -->
+        <section class="bg-white rounded-2xl shadow-sm border p-6">
+          <div class="flex items-center justify-between gap-3 mb-4">
+            <h2 class="text-lg font-semibold">YAML preview</h2>
+            <button
+              id="copyBtn"
+              class="bg-slate-100 hover:bg-slate-200 border rounded-lg px-3 py-2 text-sm font-semibold"
+            >
+              Kopieer YAML
+            </button>
+          </div>
+
+          <textarea
+            id="yamlPreview"
+            rows="34"
+            class="w-full border rounded-xl p-3 bg-slate-50"
+          ></textarea>
+
+          <p class="text-xs text-slate-500 mt-3">
+            Totalen worden realtime bijgewerkt op basis van de colliregels.
+          </p>
+        </section>
+      </div>
+    </div>
+
+    <!-- Helpers eerst, dan de app -->
+    <script src="assets/js/helpers.text.js"></script>
+    <script src="assets/js/helpers.time.js"></script>
+    <script src="assets/js/helpers.yaml.js"></script>
+    <script src="assets/js/helpers.dom.js"></script>
+    <script src="assets/js/app.js"></script>
+  </body>
+</html>

@@ -1,0 +1,11 @@
+ClientNo,ComName,ComPerson,ComStreet,ComZip,ComCity,ComCountry,Number,TaskName,TaskPerson,TaskLocation,TaskStreetOnly,TaskStreetNumber,TaskZip,TaskCity,TaskCountry
+201,Amsterdam Logistics BV,J. de Vries,Keizersgracht 125,1015 CJ,Amsterdam,Nederland,1,Amsterdam Logistics BV,J. de Vries,Magazijn A,Keizersgracht,125,1015 CJ,Amsterdam,Nederland
+202,Rotterdam Transport Groep,M. Bakker,Coolsingel 88,3011 AD,Rotterdam,Nederland,2,Rotterdam Transport Groep,M. Bakker,Laadperron 2,Coolsingel,88,3011 AD,Rotterdam,Nederland
+203,Utrecht Medisch Lab,S. van Dongen,Maliebaan 45,3581 CE,Utrecht,Nederland,3,Utrecht Medisch Lab,S. van Dongen,Hoofdingang,Maliebaan,45,3581 CE,Utrecht,Nederland
+204,Den Haag Diagnostics,P. Meijer,Laan van Meerdervoort 210,2563 AM,Den Haag,Nederland,1,Den Haag Diagnostics,P. Meijer,Ontvangst,Laan van Meerdervoort,210,2563 AM,Den Haag,Nederland
+205,Eindhoven Tech Services,R. Willems,Strijp-S 12,5617 AB,Eindhoven,Nederland,4,Eindhoven Tech Services,R. Willems,Dock 4,Strijp-S,12,5617 AB,Eindhoven,Nederland
+206,Groningen Agro Lab,K. Smit,Hereweg 77,9725 AD,Groningen,Nederland,2,Groningen Agro Lab,K. Smit,Opslag Noord,Hereweg,77,9725 AD,Groningen,Nederland
+207,Maastricht Health Support,T. Janssen,Bouillonstraat 6,6211 LH,Maastricht,Nederland,1,Maastricht Health Support,T. Janssen,Receptie,Bouillonstraat,6,6211 LH,Maastricht,Nederland
+208,Zwolle Supply Chain BV,L. Mulder,Diezerstraat 30,8011 RJ,Zwolle,Nederland,5,Zwolle Supply Chain BV,L. Mulder,Magazijn West,Diezerstraat,30,8011 RJ,Zwolle,Nederland
+209,Haarlem Farma Services,E. Visser,Grote Houtstraat 142,2011 SX,Haarlem,Nederland,2,Haarlem Farma Services,E. Visser,Expeditie,Grote Houtstraat,142,2011 SX,Haarlem,Nederland
+210,Breda Labtransport BV,D. Brouwer,Ginnekenweg 55,4818 JA,Breda,Nederland,3,Breda Labtransport BV,D. Brouwer,Laadpunt 3,Ginnekenweg,55,4818 JA,B
