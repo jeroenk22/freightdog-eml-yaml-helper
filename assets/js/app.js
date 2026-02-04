@@ -747,6 +747,73 @@ function clearSection(prefix) {
   renderYamlPreview();
 }
 
+function resetAfterDownload() {
+  // --- EML leegmaken (EML wél resetten) ---
+  const emlFile = document.getElementById("emlFile");
+  const emlSubject = document.getElementById("emlSubject");
+  const fileName = document.getElementById("fileName");
+
+  if (emlFile) emlFile.value = "";
+  if (emlSubject) emlSubject.value = "";
+  if (fileName) fileName.value = "voorbeeld.yaml";
+
+  // --- Relatie & Product zoekvelden leeg ---
+  if (typeof relatieSearch !== "undefined") relatieSearch.value = "";
+  if (typeof productSearch !== "undefined") productSearch.value = "";
+
+  if (typeof relatieSuggestions !== "undefined")
+    hideSuggestions(relatieSuggestions);
+  if (typeof productSuggestions !== "undefined")
+    hideSuggestions(productSuggestions);
+
+  // cards reset (visual)
+  if (typeof selectedRelatieCard !== "undefined") {
+    selectedRelatieCard.innerHTML = `<div class="text-sm text-slate-500">Nog geen relatie geselecteerd.</div>`;
+  }
+  if (typeof selectedProductCard !== "undefined") {
+    selectedProductCard.innerHTML = `<div class="text-sm text-slate-500">Nog geen product geselecteerd.</div>`;
+  }
+
+  // --- State reset (maar CSV arrays blijven staan: klanten/producten/verpakkingen NIET leegmaken) ---
+  state.customer = "";
+  state.customerRef = "";
+  state.customerContact = "";
+  state.product = "";
+
+  // readonly inputs ook leeg tonen
+  const customerEl = document.querySelector('[data-path="customer"]');
+  const customerContactEl = document.querySelector(
+    '[data-path="customerContact"]',
+  );
+  const productEl = document.querySelector('[data-path="product"]');
+
+  if (customerEl) customerEl.value = "";
+  if (customerContactEl) customerContactEl.value = "";
+  if (productEl) productEl.value = "";
+
+  // goods reset naar 1 lege regel
+  state.goods = [
+    {
+      parts: 1,
+      packing: "",
+      weightKg: 0,
+      volumeCbm: 0,
+      dimsLcm: 0,
+      dimsWcm: 0,
+      dimsHcm: 0,
+      notes: "",
+    },
+  ];
+  renderGoods();
+
+  // pickup & delivery leegmaken via bestaande helper (leegt ook inputs)
+  clearSection("pickup");
+  clearSection("delivery");
+
+  // YAML preview opnieuw renderen (en totalen)
+  renderYamlPreview();
+}
+
 // -----------------------------
 // EML handlers
 // -----------------------------
@@ -781,6 +848,7 @@ document.getElementById("downloadBtn").addEventListener("click", () => {
   a.click();
   a.remove();
   URL.revokeObjectURL(url);
+  resetAfterDownload();
 });
 
 document.getElementById("copyBtn").addEventListener("click", async () => {
